@@ -1,0 +1,15 @@
+{
+  "extends": "@loopback/build/config/tsconfig.common.json",
+  "compilerOptions": {
+    "composite": true
+  },
+  "references": [
+    {
+      "path": "packages/josa/tsconfig.json"
+    },
+    {
+      "path": "packages/jot/tsconfig.json"
+    }
+  ],
+  "files": []
+}
