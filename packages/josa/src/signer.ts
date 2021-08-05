@@ -11,13 +11,13 @@ import {
   Identity,
   isPacket,
   KeyPair,
-  Ticket,
   Packet,
   Payload,
   SecretKey,
   Signature,
   SignOptions,
   SignOptionsSchema,
+  Ticket,
   VerifyOptions,
 } from './types';
 import {Box} from './box';
@@ -140,12 +140,10 @@ export class Signer {
       return target;
     }
 
-    const header: Header = Object.assign(
-      {
-        kid: options.keyid,
-      },
-      options.header,
-    );
+    const header: Header = {...options.header};
+    if (options.keyid) {
+      header.kid = options.keyid;
+    }
 
     validateHeader(header);
 
@@ -163,27 +161,28 @@ export class Signer {
 
     if (options.noTimestamp) {
       delete header.sat;
+      delete header.nbf;
+      delete header.exp;
     } else {
       header.sat = timestamp;
-    }
-
-    const notBefore = options.notBefore;
-    if (!isUndefined(notBefore)) {
-      header.nbf = timespan(notBefore, timestamp);
-      if (isUndefined(header.nbf)) {
-        throw new Error(
-          '"notBefore" should be a number of seconds or string representing a timespan eg: "1d", "20h", 60',
-        );
+      const notBefore = options.notBefore;
+      if (!isUndefined(notBefore)) {
+        header.nbf = timespan(notBefore, timestamp);
+        if (isUndefined(header.nbf)) {
+          throw new Error(
+            '"notBefore" should be a number of seconds or string representing a timespan eg: "1d", "20h", 60',
+          );
+        }
       }
-    }
 
-    const expiresIn = options.expiresIn ?? this.options.defaultExpiresIn;
-    if (!isUndefined(expiresIn)) {
-      header.exp = timespan(expiresIn, timestamp);
-      if (isUndefined(header.exp)) {
-        throw new Error(
-          '"expiresIn" should be a number of seconds or string representing a timespan eg: "1d", "20h", 60',
-        );
+      const expiresIn = options.expiresIn ?? this.options.defaultExpiresIn;
+      if (!isUndefined(expiresIn)) {
+        header.exp = timespan(expiresIn, timestamp);
+        if (isUndefined(header.exp)) {
+          throw new Error(
+            '"expiresIn" should be a number of seconds or string representing a timespan eg: "1d", "20h", 60',
+          );
+        }
       }
     }
     return {header, payload: target, signatures: []};
