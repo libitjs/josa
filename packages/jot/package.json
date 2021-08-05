@@ -1,7 +1,7 @@
 {
   "name": "@libit/jot",
   "description": "A JSON Object Token signing utils shared for server and client",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "keywords": [],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
   "dependencies": {
     "@libit/crypto": "^0.3.1",
     "@libit/digester": "^0.4.1",
-    "@libit/josa": "^0.4.1"
+    "@libit/josa": "^0.4.2"
   },
   "devDependencies": {
     "@loopback/build": "^7.0.0",
