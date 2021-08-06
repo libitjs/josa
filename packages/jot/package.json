@@ -22,7 +22,8 @@
   "dependencies": {
     "@libit/crypto": "^0.3.1",
     "@libit/digester": "^0.4.1",
-    "@libit/josa": "^0.4.2"
+    "@libit/josa": "^0.4.2",
+    "msgpackr": "^1.3.10"
   },
   "devDependencies": {
     "@loopback/build": "^7.0.0",

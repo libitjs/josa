@@ -1,18 +1,9 @@
-import {
-  Identity,
-  pack,
-  Packet,
-  SecretKey,
-  Signer,
-  SignerOptions,
-  SignOptions,
-  unpack,
-  VerifyOptions,
-} from '@libit/josa';
+import {Identity, Packet, SecretKey, Signer, SignerOptions, SignOptions, VerifyOptions} from '@libit/josa';
 import {Digester} from '@libit/digester';
 import {DigestibleTicket, isDigestibleTicket} from './types';
 import {HashCtor} from '@libit/crypto';
 import {Buffer} from 'buffer';
+import {packer} from './packer';
 
 export interface JOTOptions extends Partial<SignerOptions> {}
 
@@ -60,11 +51,11 @@ export class JOT {
   }
 
   signAndPack(data: any, key: SecretKey | SecretKey[], options?: SignOptions): string {
-    return pack(this.sign(data, key, options));
+    return packer.pack(this.sign(data, key, options));
   }
 
   unpackAndUnsign(token: string, options?: VerifyOptions): DigestibleTicket {
-    return this.unsign(unpack(token), options);
+    return this.unsign(packer.unpack(token), options);
   }
 
   verify(ticket: DigestibleTicket, data?: any): boolean {

@@ -2,9 +2,9 @@ import {ed25519} from '@libit/crypto/ed25519';
 import {SHA512} from '@libit/crypto/sha512';
 import {expect} from '@loopback/testlab';
 import {KeyPair} from '../types';
-import {pack, unpack} from '../packer';
 import {Signer} from '../signer';
 import {Box} from '../box';
+import {packer} from '../packer';
 
 const SAMPLE_PAYLOAD = {action: 'send'};
 
@@ -21,14 +21,14 @@ describe('packer', function () {
 
   it('pack()', function () {
     const packet = signer.sign(SAMPLE_PAYLOAD, key);
-    const token = pack(packet);
+    const token = packer.pack(packet);
     expect(token).ok();
   });
 
   it('unpack()', function () {
     const packet = signer.sign(SAMPLE_PAYLOAD, key);
-    const token = pack(packet);
-    const packetUnpacked = unpack(token);
+    const token = packer.pack(packet);
+    const packetUnpacked = packer.unpack(token);
     expect(packet).eql(packetUnpacked);
   });
 });
