@@ -43,9 +43,15 @@ describe('signer', () => {
     expect(packet.signatures).lengthOf(1);
   });
 
-  it('verify packet ok', () => {
+  it('sign and verify', () => {
     const packet = signer.sign(SAMPLE_PAYLOAD, keypair1);
     expect(signer.verify(packet)).to.be.ok();
+  });
+
+  it('signAndPack and unpackAndVerify', () => {
+    const data = signer.signAndPack(SAMPLE_PAYLOAD, keypair1);
+    expect(Buffer.isBuffer(data)).ok();
+    expect(signer.unpackAndVerify(data)).to.be.ok();
   });
 
   it('throw error if verification failed', () => {

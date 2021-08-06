@@ -23,6 +23,7 @@ import {
 import {Box} from './box';
 import {timespan, toString, validate} from './utils';
 import {ExpiredError, NotBeforeError, SigningError} from './errors';
+import {packer} from './packer';
 
 export interface SignerOptions {
   box: Box;
@@ -64,12 +65,18 @@ export class Signer {
 
   sign(target: Packet, key: SecretKey | SecretKey[]): Packet;
   sign(target: Payload, key: SecretKey | SecretKey[], options?: SignOptions): Packet;
-  sign(target: Packet | Payload, key: SecretKey | SecretKey[], options: SignOptions = {}): Packet {
+  sign(target: any, key: any, options: any = {}): Packet {
     const packet = this.buildPacket(target, options);
     const keys = Array.isArray(key) ? key : [key];
     const content = this.encode(packet.header, packet.payload);
     packet.signatures.push(...keys.map(k => this.createSignature(content, this.box.toKeyPair(k))));
     return packet;
+  }
+
+  signAndPack(target: Packet, key: SecretKey | SecretKey[]): Buffer;
+  signAndPack(target: Payload, key: SecretKey | SecretKey[], options?: SignOptions): Buffer;
+  signAndPack(target: any, key: any, options: any = {}): Buffer {
+    return packer.pack(this.sign(target, key, options));
   }
 
   verify(packet: Packet, options?: VerifyOptions): Ticket {
@@ -133,6 +140,10 @@ export class Signer {
 
     const identities = signatures.map(s => s.idt);
     return {payload, identities};
+  }
+
+  unpackAndVerify(data: Buffer, options?: VerifyOptions): Ticket {
+    return this.verify(packer.unpack(data), options);
   }
 
   protected buildPacket(target: any, options: SignOptions = {}): Packet {
